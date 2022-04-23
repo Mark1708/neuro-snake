@@ -491,20 +491,30 @@ if __name__ == '__main__':
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_SCREEN.port_rect.collidepoint(MOUSE_POS):
-                        OPTIONS_SCREEN.active = True
+                    if OPTIONS_SCREEN.baudrate_rect.collidepoint(MOUSE_POS):
+                        OPTIONS_SCREEN.active_baudrate = True
                     else:
-                        OPTIONS_SCREEN.active = False
+                        OPTIONS_SCREEN.active_baudrate = False
+                    if OPTIONS_SCREEN.port_rect.collidepoint(MOUSE_POS):
+                        OPTIONS_SCREEN.active_port = True
+                    else:
+                        OPTIONS_SCREEN.active_port = False
 
                     if OPTIONS_SCREEN.BACK_BUTTON.check_for_input(MOUSE_POS):
                         SCREEN_STATE = 'MENU'
                     if OPTIONS_SCREEN.CONNECT_BUTTON.check_for_input(MOUSE_POS):
                         print('Connection')
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_BACKSPACE:
-                        OPTIONS_SCREEN.port = OPTIONS_SCREEN.port[:-1]
-                    else:
-                        OPTIONS_SCREEN.port += event.unicode
+                    if OPTIONS_SCREEN.active_port:
+                        if event.key == pygame.K_BACKSPACE:
+                            OPTIONS_SCREEN.port = OPTIONS_SCREEN.port[:-1]
+                        else:
+                            OPTIONS_SCREEN.port += event.unicode
+                    if OPTIONS_SCREEN.active_baudrate:
+                        if event.key == pygame.K_BACKSPACE:
+                            OPTIONS_SCREEN.baudrate = OPTIONS_SCREEN.baudrate[:-1]
+                        else:
+                            OPTIONS_SCREEN.baudrate += event.unicode
 
         pygame.display.update()
         clock.tick(FPS)
