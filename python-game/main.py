@@ -5,6 +5,7 @@ import pygame as pygame
 from pygame.math import Vector2
 
 from component.button import Button
+from component.input_block import Input
 from component.text_block import Text
 from config import *
 
@@ -331,20 +332,10 @@ class Options:
         self.port = '/dev/cu.usbmodem1431101'
         self.serial_speed = '115200'
 
-        self.text_surface = get_font(20).render(self.port, True, 'Black')
-        self.text_surface_serial_speed = get_font(20).render(self.serial_speed, True, 'Black')
-
-        self.port_rect = pygame.Rect(400, 330, 140, 32)
-        self.serial_speed_rect = pygame.Rect(400, 365, 140, 32)
-
-        self.color_active = pygame.Color('lightskyblue3')
-
-        self.color_passive = pygame.Color('lightgrey')
-        self.color_port = self.color_passive
-        self.color_serial_speed = self.color_passive
-
-        self.active_port = False
-        self.active_serial_speed = False
+        self.PORT_INPUT = Input(py_game=pygame, pos=(400, 330), text_input=self.port, font=get_font(20),
+                                c_active='lightskyblue3', c_passive='lightgrey', default_width=200, height=32)
+        self.SERIAL_SPEED_INPUT = Input(py_game=pygame, pos=(400, 375), text_input=self.serial_speed, font=get_font(20),
+                                        c_active='lightskyblue3', c_passive='lightgrey', default_width=200, height=32)
 
         self.OPTIONS_TEXT = Text(pos=(400, 260), text_input="Set up your Arduino",
                                  font=get_font(45), base_color="Black")
@@ -358,27 +349,8 @@ class Options:
         self.PORT_TEXT.update(self.screen)
         self.SERIAL_SPEED_TEXT.update(self.screen)
 
-        if self.active_port:
-            self.color_port = self.color_active
-        else:
-            self.color_port = self.color_passive
-
-        if self.active_serial_speed:
-            self.color_serial_speed = self.color_active
-        else:
-            self.color_serial_speed = self.color_passive
-
-        pygame.draw.rect(self.screen, self.color_port, self.port_rect)
-        pygame.draw.rect(self.screen, self.color_serial_speed, self.serial_speed_rect)
-
-        self.text_surface = get_font(20).render(self.port, True, 'Black')
-        self.text_surface_serial_speed = get_font(20).render(self.serial_speed, True, 'Black')
-
-        self.screen.blit(self.text_surface, (self.port_rect.x + 5, self.port_rect.y + 5))
-        self.screen.blit(self.text_surface_serial_speed, (self.serial_speed_rect.x + 5, self.serial_speed_rect.y + 5))
-
-        self.port_rect.w = max(200, self.text_surface.get_width() + 10)
-        self.serial_speed_rect.w = max(200, self.text_surface_serial_speed.get_width() + 10)
+        self.PORT_INPUT.update(pygame, self.screen)
+        self.SERIAL_SPEED_INPUT.update(pygame, self.screen)
 
 
 if __name__ == '__main__':
@@ -407,10 +379,8 @@ if __name__ == '__main__':
         MAIN_SCREEN.prev_score = GAME_SCREEN.prev_score
         if SCREEN_STATE == 'MENU':
             MAIN_SCREEN.draw()
-            # MAIN_SCREEN.update_button()
             for button in [MAIN_SCREEN.PLAY_BUTTON, MAIN_SCREEN.OPTIONS_BUTTON, MAIN_SCREEN.QUIT_BUTTON]:
                 button.change_color(MOUSE_POS)
-                # button.update(screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -460,30 +430,16 @@ if __name__ == '__main__':
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_SCREEN.serial_speed_rect.collidepoint(MOUSE_POS):
-                        OPTIONS_SCREEN.active_serial_speed = True
-                    else:
-                        OPTIONS_SCREEN.active_serial_speed = False
-                    if OPTIONS_SCREEN.port_rect.collidepoint(MOUSE_POS):
-                        OPTIONS_SCREEN.active_port = True
-                    else:
-                        OPTIONS_SCREEN.active_port = False
+                    OPTIONS_SCREEN.PORT_INPUT.change_color(MOUSE_POS)
+                    OPTIONS_SCREEN.SERIAL_SPEED_INPUT.change_color(MOUSE_POS)
 
                     if OPTIONS_SCREEN.BACK_BUTTON.check_for_input(MOUSE_POS):
                         SCREEN_STATE = 'MENU'
                     if OPTIONS_SCREEN.CONNECT_BUTTON.check_for_input(MOUSE_POS):
                         print('Connection')
                 if event.type == pygame.KEYDOWN:
-                    if OPTIONS_SCREEN.active_port:
-                        if event.key == pygame.K_BACKSPACE:
-                            OPTIONS_SCREEN.port = OPTIONS_SCREEN.port[:-1]
-                        else:
-                            OPTIONS_SCREEN.port += event.unicode
-                    if OPTIONS_SCREEN.active_serial_speed:
-                        if event.key == pygame.K_BACKSPACE:
-                            OPTIONS_SCREEN.serial_speed = OPTIONS_SCREEN.serial_speed[:-1]
-                        else:
-                            OPTIONS_SCREEN.serial_speed += event.unicode
+                    OPTIONS_SCREEN.PORT_INPUT.check_for_input(event, pygame)
+                    OPTIONS_SCREEN.SERIAL_SPEED_INPUT.check_for_input(event, pygame)
 
         pygame.display.update()
         clock.tick(FPS)
