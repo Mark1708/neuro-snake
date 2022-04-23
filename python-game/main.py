@@ -1,6 +1,5 @@
-import sys
 import random
-import time
+import sys
 
 import pygame as pygame
 from pygame.math import Vector2
@@ -13,49 +12,42 @@ def get_font(size):
     return pygame.font.Font(FONT_PATH, size)
 
 
-def is_left(event):
-    return event.key == pygame.K_LEFT or event.key == pygame.K_a
+class KeyboardEvent:
+    def __init__(self, py_event):
+        self.py_event = py_event
 
+    def is_left(self):
+        return self.py_event.key == pygame.K_LEFT or self.py_event.key == pygame.K_a
 
-def is_right(event):
-    return event.key == pygame.K_RIGHT or event.key == pygame.K_d
+    def is_right(self):
+        return self.py_event.key == pygame.K_RIGHT or self.py_event.key == pygame.K_d
 
+    def is_up(self):
+        return self.py_event.key == pygame.K_UP or self.py_event.key == pygame.K_w
 
-def is_up(event):
-    return event.key == pygame.K_UP or event.key == pygame.K_w
-
-
-def is_down(event):
-    return event.key == pygame.K_DOWN or event.key == pygame.K_s
+    def is_down(self):
+        return self.py_event.key == pygame.K_DOWN or self.py_event.key == pygame.K_s
 
 
 class Main:
-    def __init__(self, SCREEN):
+    def __init__(self, last_screen):
         self.snake_record = 0
         self.prev_score = 0
 
-        self.SCREEN = SCREEN
+        self.screen = last_screen
         self.BG = pygame.image.load(BG_MAIN_PATH)
         self.MENU_TEXT = get_font(100).render("NeuroSnake", True, "#d7fcd4")
         self.MENU_RECT = self.MENU_TEXT.get_rect(center=(400, 100))
 
-        # if self.snake_record == 0:
+        self.PLAY_BUTTON = None
+        self.OPTIONS_BUTTON = None
+        self.QUIT_BUTTON = None
         self.offset = 0
-        # else:
-        #     print(self.snake_record)
-        #     self.RESULT_TEXT = get_font(50).render(str(self.snake_record), True, "#d7fcd4")
-        #     self.offset = 150
-        #     self.MENU_RECT = self.MENU_TEXT.get_rect(center=(400, 100 + self.offset))
         self.update_button()
-        # self.PLAY_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 250 + self.offset),
-        #                           text_input="PLAY", font=get_font(75), base_color=COLORS['BASE'],
-        #                           hovering_color=COLORS['HOVER'])
-        # self.OPTIONS_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 400 + self.offset),
-        #                              text_input="OPTIONS", font=get_font(75), base_color=COLORS['BASE'],
-        #                              hovering_color=COLORS['HOVER'])
-        # self.QUIT_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 550 + self.offset),
-        #                           text_input="QUIT", font=get_font(75), base_color=COLORS['BASE'],
-        #                           hovering_color=COLORS['HOVER'])
+
+        self.text = None
+        self.RESULT_TEXT = None
+        self.RESULT_RECT = None
 
     def update_button(self):
         self.PLAY_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 250 + self.offset),
@@ -69,33 +61,17 @@ class Main:
                                   hovering_color=COLORS['HOVER'])
 
     def draw(self):
-        self.SCREEN.blit(self.BG, (0, 0))
-        # self.MENU_TEXT = get_font(100).render("NeuroSnake", True, "#d7fcd4")
-        # self.MENU_RECT = self.MENU_TEXT.get_rect(center=(400, 100))
-        #
-        # self.PLAY_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 250),
-        #                           text_input="PLAY", font=get_font(75), base_color=COLORS['BASE'],
-        #                           hovering_color=COLORS['HOVER'])
-        # self.OPTIONS_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 400),
-        #                              text_input="OPTIONS", font=get_font(75), base_color=COLORS['BASE'],
-        #                              hovering_color=COLORS['HOVER'])
-        # self.QUIT_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 550),
-        #                           text_input="QUIT", font=get_font(75), base_color=COLORS['BASE'],
-        #                           hovering_color=COLORS['HOVER'])
-        self.SCREEN.blit(self.MENU_TEXT, self.MENU_RECT)
+        self.screen.blit(self.BG, (0, 0))
+        self.screen.blit(self.MENU_TEXT, self.MENU_RECT)
 
         if self.snake_record == 0:
             self.offset = 0
         else:
-            # print(self.snake_record)
             self.offset = 150
-            self.text = f'Your record: {str(self.snake_record).center(3)}   Last result: {str(self.prev_score).center(3)}'
+            self.text = f'Your record: {str(self.snake_record).center(3)} Last result: {str(self.prev_score).center(3)}'
             self.RESULT_TEXT = get_font(40).render(self.text, True, "#d7fcd4")
             self.RESULT_RECT = self.MENU_TEXT.get_rect(center=(400, 100 + self.offset))
-            self.SCREEN.blit(self.RESULT_TEXT, self.RESULT_RECT)
-            # self.LAST_RESULT_TEXT = get_font(50).render(f'Last result: {str(self.prev_score)}', True, "#d7fcd4")
-            # self.LAST_RESULT_RECT = self.MENU_TEXT.get_rect(center=(400, 150 + self.offset))
-            # self.SCREEN.blit(self.LAST_RESULT_TEXT, self.LAST_RESULT_RECT)
+            self.screen.blit(self.RESULT_TEXT, self.RESULT_RECT)
             self.update_button()
 
 
@@ -106,6 +82,12 @@ class Snake:
         self.new_block = False
 
         self.change_move_time = 0
+
+        self.current_speed = 20
+        self.current_time = 0
+
+        self.head = None
+        self.tail = None
 
         # Голова
         self.head_up = pygame.image.load(SNAKE_PATHS['HEAD']['UP']).convert_alpha()
@@ -200,7 +182,7 @@ class Snake:
         self.current_time = pygame.time.get_ticks()
         if self.current_time > self.change_move_time:
             self.change_move_time = self.current_time + 1000 / (MAX_SPEED - self.current_speed)
-            if self.new_block == True:
+            if self.new_block:
                 # Движение змейки со сдвигом при увеличении длины
                 body_copy = self.body[:]
                 body_copy.insert(0, body_copy[0] + self.direction)
@@ -246,13 +228,16 @@ class Fruit:
 
 
 class Game:
-    def __init__(self, screen):
-        self.record = 0
-        self.prev_score = 0
-        self.SCREEN = screen
+    def __init__(self, last_screen):
+        self.screen = last_screen
         self.snake = Snake()
         self.fruit = Fruit()
+
         self.GAME_STATE = 'WAIT'
+
+        self.record = 0
+        self.prev_score = 0
+        self.score = len(self.snake.body) - 3
 
     def update(self):
         self.snake.move_snake()
@@ -278,7 +263,6 @@ class Game:
                     self.fruit.randomize()
 
     def check_fail(self):
-        # print(self.GAME_STATE)
         self.score = len(self.snake.body) - 3
         if self.GAME_STATE == 'PLAY':
             self.prev_score = self.score
@@ -286,23 +270,14 @@ class Game:
                 self.record = self.score
             # Фейл если упираемся в границы карты
             if not (0 <= self.snake.body[0].x < CELL_NUMBER) or not (0 <= self.snake.body[0].y < CELL_NUMBER):
-                print(f'0 <= {self.snake.body[0].x} < {CELL_NUMBER}')
-                print(f'0 <= {self.snake.body[0].y} < {CELL_NUMBER}')
                 self.game_over()
 
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
-                if self.GAME_STATE == 'PLAY':
-                    print(f'fail2 {block} {self.snake.body[0]}')
                 self.game_over()
 
     def game_over(self):
-        # print('game_over')
         if self.GAME_STATE == 'PLAY' or self.GAME_STATE == 'GAME_OVER':
-            # score_surface = game_font.render('Your score is ' + str(len(self.snake.body) - 3), True, (56, 74, 12))
-            # score_rect = score_surface.get_rect(center=(400, 400))
-            # self.SCREEN.blit(score_surface, score_rect)
-            # time.sleep(4)
             self.GAME_STATE = 'GAME_OVER'
         self.snake.reset()
 
@@ -314,12 +289,12 @@ class Game:
                 for col in range(CELL_NUMBER):
                     if col % 2 == 0:
                         grass_rect = pygame.Rect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                        pygame.draw.rect(self.SCREEN, grass_color, grass_rect)
+                        pygame.draw.rect(self.screen, grass_color, grass_rect)
             else:
                 for col in range(CELL_NUMBER):
                     if col % 2 != 0:
                         grass_rect = pygame.Rect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                        pygame.draw.rect(self.SCREEN, grass_color, grass_rect)
+                        pygame.draw.rect(self.screen, grass_color, grass_rect)
 
     def draw_score(self):
         score_text = str(len(self.snake.body) - 3)
@@ -331,16 +306,16 @@ class Game:
         bg_rect = pygame.Rect(apple_rect.left, apple_rect.top, apple_rect.width + score_rect.width + 6,
                               apple_rect.height)
 
-        pygame.draw.rect(self.SCREEN, (167, 209, 61), bg_rect)
-        self.SCREEN.blit(score_surface, score_rect)
+        pygame.draw.rect(self.screen, (167, 209, 61), bg_rect)
+        self.screen.blit(score_surface, score_rect)
         screen.blit(apple, apple_rect)
         pygame.draw.rect(screen, (56, 74, 12), bg_rect, 2)
 
 
 class Options:
 
-    def __init__(self, screen):
-        self.screen = screen
+    def __init__(self, last_screen):
+        self.screen = last_screen
 
         self.OPTIONS_TEXT = get_font(45).render("Set up your Arduino", True, "Black")
         self.OPTIONS_RECT = self.OPTIONS_TEXT.get_rect(center=(400, 260))
@@ -351,65 +326,56 @@ class Options:
         self.CONNECT_BUTTON = Button(image=None, pos=(500, 460),
                                      text_input="CONNECT", font=get_font(45), base_color='Black',
                                      hovering_color=COLORS['HOVER'])
-        # self.OPTIONS_BACK = Button(image=None, pos=(400, 460),
-        #                            text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
 
         self.port = '/dev/cu.usbmodem1431101'
-        self.baudrate = '115200'
+        self.serial_speed = '115200'
 
-        # create rectangle
+        self.text_surface = get_font(20).render(self.port, True, 'Black')
+        self.text_surface_serial_speed = get_font(20).render(self.serial_speed, True, 'Black')
+
         self.port_rect = pygame.Rect(400, 330, 140, 32)
-        self.baudrate_rect = pygame.Rect(400, 365, 140, 32)
+        self.serial_speed_rect = pygame.Rect(400, 365, 140, 32)
 
-        # color_active stores color(lightskyblue3) which
-        # gets active when input box is clicked by user
         self.color_active = pygame.Color('lightskyblue3')
 
-        # color_passive store color(chartreuse4) which is
-        # color of input box.
         self.color_passive = pygame.Color('lightgrey')
         self.color_port = self.color_passive
-        self.color_baudrate = self.color_passive
+        self.color_serial_speed = self.color_passive
 
         self.active_port = False
-        self.active_baudrate = False
+        self.active_serial_speed = False
 
         self.PORT_TEXT = get_font(35).render("Arduino port: ", True, "Black")
         self.PORT_RECT = self.OPTIONS_TEXT.get_rect(center=(350, 350))
-        self.BAUDRATE_TEXT = get_font(35).render("Baudrate: ", True, "Black")
-        self.BAUDRATE_RECT = self.OPTIONS_TEXT.get_rect(center=(350, 390))
+        self.SERIAL_SPEED_TEXT = get_font(35).render("Serial speed: ", True, "Black")
+        self.SERIAL_SPEED_RECT = self.OPTIONS_TEXT.get_rect(center=(350, 390))
 
     def draw(self):
         self.screen.blit(self.OPTIONS_TEXT, self.OPTIONS_RECT)
         self.screen.blit(self.PORT_TEXT, self.PORT_RECT)
-        self.screen.blit(self.BAUDRATE_TEXT, self.BAUDRATE_RECT)
+        self.screen.blit(self.SERIAL_SPEED_TEXT, self.SERIAL_SPEED_RECT)
 
         if self.active_port:
             self.color_port = self.color_active
         else:
             self.color_port = self.color_passive
 
-        if self.active_baudrate:
-            self.color_baudrate = self.color_active
+        if self.active_serial_speed:
+            self.color_serial_speed = self.color_active
         else:
-            self.color_baudrate = self.color_passive
+            self.color_serial_speed = self.color_passive
 
-            # draw rectangle and argument passed which should
-            # be on screen
         pygame.draw.rect(self.screen, self.color_port, self.port_rect)
-        pygame.draw.rect(self.screen, self.color_baudrate, self.baudrate_rect)
+        pygame.draw.rect(self.screen, self.color_serial_speed, self.serial_speed_rect)
 
         self.text_surface = get_font(20).render(self.port, True, 'Black')
-        self.text_surface_baudrate = get_font(20).render(self.baudrate, True, 'Black')
+        self.text_surface_serial_speed = get_font(20).render(self.serial_speed, True, 'Black')
 
-        # render at position stated in arguments
         self.screen.blit(self.text_surface, (self.port_rect.x + 5, self.port_rect.y + 5))
-        self.screen.blit(self.text_surface_baudrate, (self.baudrate_rect.x + 5, self.baudrate_rect.y + 5))
+        self.screen.blit(self.text_surface_serial_speed, (self.serial_speed_rect.x + 5, self.serial_speed_rect.y + 5))
 
-        # set width of textfield so that text cannot get
-        # outside of user's text input
         self.port_rect.w = max(200, self.text_surface.get_width() + 10)
-        self.baudrate_rect.w = max(200, self.text_surface_baudrate.get_width() + 10)
+        self.serial_speed_rect.w = max(200, self.text_surface_serial_speed.get_width() + 10)
 
 
 if __name__ == '__main__':
@@ -431,8 +397,6 @@ if __name__ == '__main__':
     MAIN_SCREEN = Main(screen)
     GAME_SCREEN = Game(screen)
     OPTIONS_SCREEN = Options(screen)
-
-    # snake_record = 0
 
     while True:
         MOUSE_POS = pygame.mouse.get_pos()
@@ -468,13 +432,14 @@ if __name__ == '__main__':
                     GAME_SCREEN.update()
                 if event.type == pygame.KEYDOWN:
                     GAME_SCREEN.GAME_STATE = 'PLAY'
-                    if is_up(event) and GAME_SCREEN.snake.direction.y != 1:
+                    key_event = KeyboardEvent(event)
+                    if key_event.is_up() and GAME_SCREEN.snake.direction.y != 1:
                         GAME_SCREEN.snake.direction = Vector2(0, -1)
-                    if is_right(event) and GAME_SCREEN.snake.direction.x != -1:
+                    if key_event.is_right() and GAME_SCREEN.snake.direction.x != -1:
                         GAME_SCREEN.snake.direction = Vector2(1, 0)
-                    if is_down(event) and GAME_SCREEN.snake.direction.y != -1:
+                    if key_event.is_down() and GAME_SCREEN.snake.direction.y != -1:
                         GAME_SCREEN.snake.direction = Vector2(0, 1)
-                    if is_left(event) and GAME_SCREEN.snake.direction.x != 1:
+                    if key_event.is_left() and GAME_SCREEN.snake.direction.x != 1:
                         GAME_SCREEN.snake.direction = Vector2(-1, 0)
 
             screen.fill((175, 215, 70))
@@ -491,10 +456,10 @@ if __name__ == '__main__':
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_SCREEN.baudrate_rect.collidepoint(MOUSE_POS):
-                        OPTIONS_SCREEN.active_baudrate = True
+                    if OPTIONS_SCREEN.serial_speed_rect.collidepoint(MOUSE_POS):
+                        OPTIONS_SCREEN.active_serial_speed = True
                     else:
-                        OPTIONS_SCREEN.active_baudrate = False
+                        OPTIONS_SCREEN.active_serial_speed = False
                     if OPTIONS_SCREEN.port_rect.collidepoint(MOUSE_POS):
                         OPTIONS_SCREEN.active_port = True
                     else:
@@ -510,11 +475,11 @@ if __name__ == '__main__':
                             OPTIONS_SCREEN.port = OPTIONS_SCREEN.port[:-1]
                         else:
                             OPTIONS_SCREEN.port += event.unicode
-                    if OPTIONS_SCREEN.active_baudrate:
+                    if OPTIONS_SCREEN.active_serial_speed:
                         if event.key == pygame.K_BACKSPACE:
-                            OPTIONS_SCREEN.baudrate = OPTIONS_SCREEN.baudrate[:-1]
+                            OPTIONS_SCREEN.serial_speed = OPTIONS_SCREEN.serial_speed[:-1]
                         else:
-                            OPTIONS_SCREEN.baudrate += event.unicode
+                            OPTIONS_SCREEN.serial_speed += event.unicode
 
         pygame.display.update()
         clock.tick(FPS)
