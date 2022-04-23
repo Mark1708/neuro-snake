@@ -5,6 +5,7 @@ import pygame as pygame
 from pygame.math import Vector2
 
 from component.button import Button
+from component.text_block import Text
 from config import *
 
 
@@ -36,12 +37,19 @@ class Main:
 
         self.screen = last_screen
         self.BG = pygame.image.load(BG_MAIN_PATH)
-        self.MENU_TEXT = get_font(100).render("NeuroSnake", True, "#d7fcd4")
-        self.MENU_RECT = self.MENU_TEXT.get_rect(center=(400, 100))
 
-        self.PLAY_BUTTON = None
-        self.OPTIONS_BUTTON = None
-        self.QUIT_BUTTON = None
+        self.MENU_TEXT = Text(pos=(400, 100), text_input="NeuroSnake",
+                              font=get_font(100), base_color="#d7fcd4")
+
+        self.PLAY_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 250),
+                                  text_input="PLAY", font=get_font(75), base_color=COLORS['BASE'],
+                                  hovering_color=COLORS['HOVER'])
+        self.OPTIONS_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 400),
+                                     text_input="OPTIONS", font=get_font(75), base_color=COLORS['BASE'],
+                                     hovering_color=COLORS['HOVER'])
+        self.QUIT_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 550),
+                                  text_input="QUIT", font=get_font(75), base_color=COLORS['BASE'],
+                                  hovering_color=COLORS['HOVER'])
         self.offset = 0
         self.update_button()
 
@@ -50,29 +58,24 @@ class Main:
         self.RESULT_RECT = None
 
     def update_button(self):
-        self.PLAY_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 250 + self.offset),
-                                  text_input="PLAY", font=get_font(75), base_color=COLORS['BASE'],
-                                  hovering_color=COLORS['HOVER'])
-        self.OPTIONS_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 400 + self.offset),
-                                     text_input="OPTIONS", font=get_font(75), base_color=COLORS['BASE'],
-                                     hovering_color=COLORS['HOVER'])
-        self.QUIT_BUTTON = Button(image=pygame.image.load(BG_BUTTON_PATH), pos=(400, 550 + self.offset),
-                                  text_input="QUIT", font=get_font(75), base_color=COLORS['BASE'],
-                                  hovering_color=COLORS['HOVER'])
+        self.PLAY_BUTTON.update(screen,  self.offset)
+        self.OPTIONS_BUTTON.update(screen,  self.offset)
+        self.QUIT_BUTTON.update(screen,  self.offset)
 
     def draw(self):
         self.screen.blit(self.BG, (0, 0))
-        self.screen.blit(self.MENU_TEXT, self.MENU_RECT)
-
+        self.MENU_TEXT.update(screen)
         if self.snake_record == 0:
             self.offset = 0
         else:
-            self.offset = 150
+            self.offset = 140
             self.text = f'Your record: {str(self.snake_record).center(3)} Last result: {str(self.prev_score).center(3)}'
-            self.RESULT_TEXT = get_font(40).render(self.text, True, "#d7fcd4")
-            self.RESULT_RECT = self.MENU_TEXT.get_rect(center=(400, 100 + self.offset))
-            self.screen.blit(self.RESULT_TEXT, self.RESULT_RECT)
+
+            self.RESULT_TEXT = Text(pos=(400, 100 + self.offset), text_input=self.text,
+                              font=get_font(40), base_color="#d7fcd4")
+            self.RESULT_TEXT.update(screen)
             self.update_button()
+        self.update_button()
 
 
 class Snake:
@@ -317,8 +320,6 @@ class Options:
     def __init__(self, last_screen):
         self.screen = last_screen
 
-        self.OPTIONS_TEXT = get_font(45).render("Set up your Arduino", True, "Black")
-        self.OPTIONS_RECT = self.OPTIONS_TEXT.get_rect(center=(400, 260))
         self.BACK_BUTTON = Button(image=None, pos=(200, 460),
                                   text_input="BACK", font=get_font(45), base_color='Black',
                                   hovering_color=COLORS['HOVER'])
@@ -345,15 +346,17 @@ class Options:
         self.active_port = False
         self.active_serial_speed = False
 
-        self.PORT_TEXT = get_font(35).render("Arduino port: ", True, "Black")
-        self.PORT_RECT = self.OPTIONS_TEXT.get_rect(center=(350, 350))
-        self.SERIAL_SPEED_TEXT = get_font(35).render("Serial speed: ", True, "Black")
-        self.SERIAL_SPEED_RECT = self.OPTIONS_TEXT.get_rect(center=(350, 390))
+        self.OPTIONS_TEXT = Text(pos=(400, 260), text_input="Set up your Arduino",
+                                 font=get_font(45), base_color="Black")
+        self.PORT_TEXT = Text(pos=(250, 350), text_input="Arduino port: ",
+                              font=get_font(35), base_color="Black")
+        self.SERIAL_SPEED_TEXT = Text(pos=(250, 390), text_input="Serial speed: ",
+                                      font=get_font(35), base_color="Black")
 
     def draw(self):
-        self.screen.blit(self.OPTIONS_TEXT, self.OPTIONS_RECT)
-        self.screen.blit(self.PORT_TEXT, self.PORT_RECT)
-        self.screen.blit(self.SERIAL_SPEED_TEXT, self.SERIAL_SPEED_RECT)
+        self.OPTIONS_TEXT.update(self.screen)
+        self.PORT_TEXT.update(self.screen)
+        self.SERIAL_SPEED_TEXT.update(self.screen)
 
         if self.active_port:
             self.color_port = self.color_active
@@ -404,9 +407,10 @@ if __name__ == '__main__':
         MAIN_SCREEN.prev_score = GAME_SCREEN.prev_score
         if SCREEN_STATE == 'MENU':
             MAIN_SCREEN.draw()
+            # MAIN_SCREEN.update_button()
             for button in [MAIN_SCREEN.PLAY_BUTTON, MAIN_SCREEN.OPTIONS_BUTTON, MAIN_SCREEN.QUIT_BUTTON]:
                 button.change_color(MOUSE_POS)
-                button.update(screen)
+                # button.update(screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

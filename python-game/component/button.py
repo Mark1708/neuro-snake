@@ -12,7 +12,11 @@ class Button:
 		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
 		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
 
-	def update(self, screen):
+	def update(self, screen, offset_y=0):
+		# self.y_pos = self.y_pos + offset_y
+		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos + offset_y))
+		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos + offset_y))
+
 		if self.image is not None:
 			screen.blit(self.image, self.rect)
 		screen.blit(self.text, self.text_rect)
@@ -27,5 +31,3 @@ class Button:
 			self.text = self.font.render(self.text_input, True, self.hovering_color)
 		else:
 			self.text = self.font.render(self.text_input, True, self.base_color)
-
-
