@@ -24,6 +24,9 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
 
     apple = pygame.image.load(APPLE_PATH).convert_alpha()
+    brain = pygame.image.load(BRAIN_PATH).convert_alpha()
+    connected = pygame.image.load(CONNECT_PATH).convert_alpha()
+    disconnected = pygame.image.load(DISCONNECT_PATH).convert_alpha()
 
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, FPS)
@@ -31,7 +34,7 @@ if __name__ == '__main__':
     SCREEN_STATE = 'MENU'  # 'GAME' 'OPTIONS'
 
     MAIN_SCREEN = Main(screen, pygame, get_font(100), get_font(40), get_font(75))
-    GAME_SCREEN = Game(screen, pygame, get_font(25), apple)
+    GAME_SCREEN = Game(screen, pygame, get_font(25), apple, brain, connected, disconnected)
     OPTIONS_SCREEN = ArduinoOptions(screen, pygame, get_font(45), get_font(20), get_font(35))
 
     LISTENER = Listener()

@@ -18,8 +18,11 @@ COLORS = {
 BG_MAIN_PATH = 'assets/graphics/main_bg.jpg'
 BG_BUTTON_PATH = 'assets/graphics/button_bg.png'
 
-# APPLE
+# ICONS
 APPLE_PATH = 'assets/graphics/apple.png'
+BRAIN_PATH = 'assets/graphics/brain.png'
+CONNECT_PATH = 'assets/graphics/connected.png'
+DISCONNECT_PATH = 'assets/graphics/disconnected.png'
 
 
 # SNAKE
