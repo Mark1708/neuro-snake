@@ -17,8 +17,8 @@ class Game:
         self.prev_score = 0
         self.score = len(self.snake.body) - 3
 
-    def update(self, pygame):
-        self.snake.move_snake(pygame)
+    def update(self, pygame, LISTENER):
+        self.snake.move_snake(pygame, LISTENER)
         self.check_collision()
         self.check_fail()
 

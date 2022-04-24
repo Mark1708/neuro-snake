@@ -13,7 +13,6 @@ class Button:
 		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
 
 	def update(self, screen, offset_y=0):
-		# self.y_pos = self.y_pos + offset_y
 		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos + offset_y))
 		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos + offset_y))
 

@@ -13,11 +13,13 @@ class ArduinoOptions:
                                   text_input="BACK", font=button_font, base_color='Black',
                                   hovering_color=COLORS['HOVER'])
 
+        self.button_font = button_font
+
         self.CONNECT_BUTTON = Button(image=None, pos=(500, 460),
                                      text_input="CONNECT", font=button_font, base_color='Black',
                                      hovering_color=COLORS['HOVER'])
 
-        self.port = '/dev/cu.usbmodem1431101'
+        self.port = '/dev/cu.usbmodem142201'
         self.serial_speed = '115200'
 
         self.PORT_INPUT = Input(py_game=py_game, pos=(400, 330), text_input=self.port, font=input_font,
@@ -39,3 +41,14 @@ class ArduinoOptions:
 
         self.PORT_INPUT.update(py_game, self.screen)
         self.SERIAL_SPEED_INPUT.update(py_game, self.screen)
+
+    def update_connect_button(self, is_connected):
+        if is_connected:
+            self.CONNECT_BUTTON = Button(image=None, pos=(500, 460),
+                                         text_input="DISCONNECT", font=self.button_font, base_color='Black',
+                                         hovering_color='Red')
+        else:
+            self.CONNECT_BUTTON = Button(image=None, pos=(500, 460),
+                                         text_input="CONNECT", font=self.button_font, base_color='Black',
+                                         hovering_color=COLORS['HOVER'])
+

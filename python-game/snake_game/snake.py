@@ -11,7 +11,7 @@ class Snake:
 
         self.change_move_time = 0
 
-        self.current_speed = 20
+        self.current_speed = 161
         self.current_time = 0
 
         self.head = None
@@ -105,11 +105,11 @@ class Snake:
         elif tail_relation == Vector2(0, -1):  # Вверх
             self.tail = self.tail_down
 
-    def move_snake(self, pygame):
-        self.current_speed = 20
+    def move_snake(self, pygame, LISTENER):
+        self.current_speed = LISTENER.read_data()
         self.current_time = pygame.time.get_ticks()
         if self.current_time > self.change_move_time:
-            self.change_move_time = self.current_time + 1000 / (MAX_SPEED - self.current_speed)
+            self.change_move_time = self.current_time + 10000 / (MAX_SPEED - self.current_speed)
             if self.new_block:
                 # Движение змейки со сдвигом при увеличении длины
                 body_copy = self.body[:]

@@ -7,7 +7,8 @@ from config import *
 from screen.game_screen import Game
 from screen.menu_screen import Main
 from screen.arduino_options_screen import ArduinoOptions
-from snake_game.keyboard_event import KeyboardEvent
+from service.ComListener import Listener
+from service.keyboard_event import KeyboardEvent
 
 
 def get_font(size):
@@ -32,6 +33,8 @@ if __name__ == '__main__':
     MAIN_SCREEN = Main(screen, pygame, get_font(100), get_font(40), get_font(75))
     GAME_SCREEN = Game(screen, pygame, get_font(25), apple)
     OPTIONS_SCREEN = ArduinoOptions(screen, pygame, get_font(45), get_font(20), get_font(35))
+
+    LISTENER = Listener()
 
     while True:
         MOUSE_POS = pygame.mouse.get_pos()
@@ -63,7 +66,7 @@ if __name__ == '__main__':
                     SCREEN_STATE = 'MENU'
                     MAIN_SCREEN.draw()
                 if event.type == SCREEN_UPDATE:
-                    GAME_SCREEN.update(pygame)
+                    GAME_SCREEN.update(pygame, LISTENER)
                 if event.type == pygame.KEYDOWN:
                     GAME_SCREEN.GAME_STATE = 'PLAY'
                     key_event = KeyboardEvent(event, pygame)
@@ -96,10 +99,20 @@ if __name__ == '__main__':
                     if OPTIONS_SCREEN.BACK_BUTTON.check_for_input(MOUSE_POS):
                         SCREEN_STATE = 'MENU'
                     if OPTIONS_SCREEN.CONNECT_BUTTON.check_for_input(MOUSE_POS):
-                        print('Connection')
+                        if LISTENER.is_connected:
+                            LISTENER.is_connected = False
+                        else:
+                            LISTENER.connection(
+                                OPTIONS_SCREEN.PORT_INPUT.text_input,
+                                OPTIONS_SCREEN.SERIAL_SPEED_INPUT.text_input
+                            )
+                        OPTIONS_SCREEN.update_connect_button(LISTENER.is_connected)
                 if event.type == pygame.KEYDOWN:
-                    OPTIONS_SCREEN.PORT_INPUT.check_for_input(event, pygame)
-                    OPTIONS_SCREEN.SERIAL_SPEED_INPUT.check_for_input(event, pygame)
+                    if OPTIONS_SCREEN.PORT_INPUT.active:
+                        OPTIONS_SCREEN.PORT_INPUT.check_for_input(event, pygame)
+
+                    if OPTIONS_SCREEN.SERIAL_SPEED_INPUT.active:
+                        OPTIONS_SCREEN.SERIAL_SPEED_INPUT.check_for_input(event, pygame)
 
         pygame.display.update()
         clock.tick(FPS)
