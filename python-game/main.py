@@ -4,9 +4,9 @@ import pygame as pygame
 from pygame.math import Vector2
 
 from config import *
-from game_screen import Game
-from menu_screen import Main
-from arduino_options_screen import ArduinoOptions
+from screen.game_screen import Game
+from screen.menu_screen import Main
+from screen.arduino_options_screen import ArduinoOptions
 from snake_game.keyboard_event import KeyboardEvent
 
 
