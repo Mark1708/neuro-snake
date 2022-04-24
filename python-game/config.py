@@ -7,10 +7,6 @@ FPS = 144
 
 CAPTION = 'NeuroSnake v2.100000'
 
-MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT = 'UP', 'DOWN', 'LEFT', 'RIGHT'
-FIRST_MOVE = MOVE_RIGHT
-
-
 # FONT
 FONT_PATH = 'assets/font/Gogh-ExtraBoldItalic.otf'
 COLORS = {
