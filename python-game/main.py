@@ -75,11 +75,11 @@ if __name__ == '__main__':
                     key_event = KeyboardEvent(event, pygame)
                     if key_event.is_up() and GAME_SCREEN.snake.direction.y != 1:
                         GAME_SCREEN.snake.direction = Vector2(0, -1)
-                    if key_event.is_right() and GAME_SCREEN.snake.direction.x != -1:
+                    elif key_event.is_right() and GAME_SCREEN.snake.direction.x != -1:
                         GAME_SCREEN.snake.direction = Vector2(1, 0)
-                    if key_event.is_down() and GAME_SCREEN.snake.direction.y != -1:
+                    elif key_event.is_down() and GAME_SCREEN.snake.direction.y != -1:
                         GAME_SCREEN.snake.direction = Vector2(0, 1)
-                    if key_event.is_left() and GAME_SCREEN.snake.direction.x != 1:
+                    elif key_event.is_left() and GAME_SCREEN.snake.direction.x != 1:
                         GAME_SCREEN.snake.direction = Vector2(-1, 0)
 
             screen.fill((175, 215, 70))
