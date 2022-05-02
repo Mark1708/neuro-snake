@@ -25,7 +25,9 @@ class Listener:
         data = [650, 162]
         if self.is_connected:
             try:
-                data = self.arduino.readline().decode("utf-8").strip('\r\n').split(',')
+                eeg = self.arduino.readline().decode("utf-8").strip('\r\n').split(',')
+                if len(eeg) == 2:
+                    data = eeg
             except Exception as e:
                 self.is_connected = False
                 print(e)

@@ -1,6 +1,7 @@
 from pygame.math import Vector2
 
 from config import MAX_SPEED, SNAKE_PATHS, CRUNCH_SOUND_PATH, CELL_SIZE
+from service.data_service import DataService
 
 
 class Snake:
@@ -13,6 +14,8 @@ class Snake:
 
         self.current_speed = 161
         self.current_time = 0
+
+        self.data_service = DataService()
 
         self.head = None
         self.tail = None
@@ -107,6 +110,12 @@ class Snake:
 
     def move_snake(self, pygame, LISTENER):
         self.current_speed = LISTENER.read_data()
+        if LISTENER.is_connected:
+            if self.data_service.state == 'CREATE':
+                self.data_service.start_writing(self.current_speed)
+            else:
+                self.data_service.write_data(self.current_speed)
+
         self.current_time = pygame.time.get_ticks()
         if self.current_time > self.change_move_time:
             self.change_move_time = self.current_time + 10000 / (MAX_SPEED - self.current_speed)

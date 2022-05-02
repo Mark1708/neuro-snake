@@ -54,3 +54,4 @@ MAX_SPEED = 250
 # SOUNDS
 CRUNCH_SOUND_PATH = 'assets/sound/crunch.wav'
 
+RESOURCE_PATH = '/Users/markguranov/Downloads/resource/'

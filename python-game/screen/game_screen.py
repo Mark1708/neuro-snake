@@ -64,6 +64,7 @@ class Game:
 
     def game_over(self):
         if self.GAME_STATE == 'PLAY' or self.GAME_STATE == 'GAME_OVER':
+            self.snake.data_service.finished()
             self.GAME_STATE = 'GAME_OVER'
         self.snake.reset()
 

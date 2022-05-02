@@ -7,7 +7,7 @@ from config import *
 from screen.game_screen import Game
 from screen.menu_screen import Main
 from screen.arduino_options_screen import ArduinoOptions
-from service.ComListener import Listener
+from service.com_listener import Listener
 from service.keyboard_event import KeyboardEvent
 
 
@@ -55,6 +55,7 @@ if __name__ == '__main__':
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if MAIN_SCREEN.PLAY_BUTTON.check_for_input(MOUSE_POS):
                         SCREEN_STATE = 'GAME'
+                        GAME_SCREEN.snake.data_service.state = 'CREATE'
                         GAME_SCREEN.snake.reset()
                         GAME_SCREEN.GAME_STATE = 'WAIT'
                     if MAIN_SCREEN.OPTIONS_BUTTON.check_for_input(MOUSE_POS):

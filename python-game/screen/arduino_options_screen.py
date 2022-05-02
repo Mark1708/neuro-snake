@@ -19,7 +19,7 @@ class ArduinoOptions:
                                      text_input="CONNECT", font=button_font, base_color='Black',
                                      hovering_color=COLORS['HOVER'])
 
-        self.port = '/dev/cu.usbmodem142201'
+        self.port = '/dev/cu.usbmodem1431101'
         self.serial_speed = '115200'
 
         self.PORT_INPUT = Input(py_game=py_game, pos=(400, 330), text_input=self.port, font=input_font,
