@@ -2,6 +2,7 @@ from config import RESOURCE_PATH
 from datetime import datetime
 import pytz
 
+from service.report_service import ReportService
 
 class DataService:
     def __init__(self):
@@ -27,6 +28,9 @@ class DataService:
         real_time = self.last_time.timestamp() - self.time.timestamp()
         self.file.write(f'{real_time},{data}\n')
 
-    def finished(self):
-        self.state = 'FINISH'
+    def finished(self, score):
         self.file.close()
+        self.state = 'FINISH'
+
+        report_service = ReportService(self, score)
+        report_service.run_process()

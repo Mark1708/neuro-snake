@@ -1,3 +1,5 @@
 __pycache__/
 venvpip/
 .idea/
+assets/visualization/*
+!assets/visualization/header.png

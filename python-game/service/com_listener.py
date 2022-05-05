@@ -9,6 +9,11 @@ class Listener:
         self.arduino = None
         self.is_connected = False
 
+        # For test
+        # self.file1 = open('/Users/markguranov/Downloads/resource/BettaGame.dat', 'r')
+        # self.lines = self.file1.readlines()
+        # self.line = 0
+
     def connection(self, port, serial_speed):
         connection_flag = True
         try:
@@ -22,7 +27,9 @@ class Listener:
             self.is_connected = connection_flag
 
     def read_data(self):
-        data = [650, 162]
+        # data = self.lines[self.line].replace('\n', '').split('\t')
+        # self.line += 1
+        data = [650, 2.16]
         if self.is_connected:
             try:
                 eeg = self.arduino.readline().decode("utf-8").strip('\r\n').split(',')
@@ -31,4 +38,6 @@ class Listener:
             except Exception as e:
                 self.is_connected = False
                 print(e)
-        return int(data[1])
+                self.connection(self.port, self.serial_speed)
+
+        return float(data[1])

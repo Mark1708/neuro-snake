@@ -1,6 +1,6 @@
 from pygame.math import Vector2
 
-from config import MAX_SPEED, SNAKE_PATHS, CRUNCH_SOUND_PATH, CELL_SIZE
+from config import SNAKE_PATHS, CRUNCH_SOUND_PATH, CELL_SIZE
 from service.data_service import DataService
 
 
@@ -19,6 +19,8 @@ class Snake:
 
         self.head = None
         self.tail = None
+
+        self.name_direction = 'RIGHT'
 
         # Голова
         self.head_up = pygame.image.load(SNAKE_PATHS['HEAD']['UP']).convert_alpha()
@@ -87,25 +89,25 @@ class Snake:
     def update_head_graphics(self):
         head_relation = self.body[1] - self.body[0]
 
-        if head_relation == Vector2(1, 0):  # Влево
+        if head_relation.x >= 0 and head_relation.y == 0:  # Влево
             self.head = self.head_left
-        elif head_relation == Vector2(-1, 0):  # Впрво
+        elif head_relation.x <= 0 and head_relation.y == 0:  # Впрво
             self.head = self.head_right
-        elif head_relation == Vector2(0, 1):  # Вверх
+        elif head_relation.x == 0 and head_relation.y >= 0:  # Вверх
             self.head = self.head_up
-        elif head_relation == Vector2(0, -1):  # Вниз
+        elif head_relation.x == 0 and head_relation.y <= 0:  # Вниз
             self.head = self.head_down
 
     def update_tail_graphics(self):
         tail_relation = self.body[-2] - self.body[-1]
 
-        if tail_relation == Vector2(1, 0):  # Впрво
+        if tail_relation.x >= 0 and tail_relation.y == 0:  # Впрво
             self.tail = self.tail_left
-        elif tail_relation == Vector2(-1, 0):  # Влево
+        elif tail_relation.x <= 0 and tail_relation.y == 0:  # Влево
             self.tail = self.tail_right
-        elif tail_relation == Vector2(0, 1):  # Вниз
+        elif tail_relation.x == 0 and tail_relation.y >= 0:  # Вниз
             self.tail = self.tail_up
-        elif tail_relation == Vector2(0, -1):  # Вверх
+        elif tail_relation.x == 0 and tail_relation.y <= 0:  # Вверх
             self.tail = self.tail_down
 
     def move_snake(self, pygame, LISTENER):
@@ -113,12 +115,12 @@ class Snake:
         if LISTENER.is_connected:
             if self.data_service.state == 'CREATE':
                 self.data_service.start_writing(self.current_speed)
-            else:
+            elif self.data_service.state == 'WRITE':
                 self.data_service.write_data(self.current_speed)
 
         self.current_time = pygame.time.get_ticks()
         if self.current_time > self.change_move_time:
-            self.change_move_time = self.current_time + 10000 / (MAX_SPEED - self.current_speed)
+            self.change_move_time = self.current_time + 100 * self.current_speed / 3
             if self.new_block:
                 # Движение змейки со сдвигом при увеличении длины
                 body_copy = self.body[:]

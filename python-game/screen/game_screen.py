@@ -1,3 +1,5 @@
+import threading
+
 from config import CELL_NUMBER, CELL_SIZE
 from snake_game.fruit import Fruit
 from snake_game.snake import Snake
@@ -64,7 +66,8 @@ class Game:
 
     def game_over(self):
         if self.GAME_STATE == 'PLAY' or self.GAME_STATE == 'GAME_OVER':
-            self.snake.data_service.finished()
+            if self.is_connected:
+                threading.Thread(target=self.snake.data_service.finished, args=[self.score]).start()
             self.GAME_STATE = 'GAME_OVER'
         self.snake.reset()
 
@@ -99,7 +102,7 @@ class Game:
         pygame.draw.rect(self.screen, (56, 74, 12), bg_rect, 2)
 
     def draw_speed(self, pygame):
-        speed_text = str(self.snake.current_speed)
+        speed_text = str(round(self.snake.current_speed, 3))
         speed_surface = self.game_font.render(speed_text, True, (56, 74, 12))
         speed_x = int(CELL_SIZE + 60)
         speed_y = int(CELL_SIZE * CELL_NUMBER - 40)

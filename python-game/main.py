@@ -3,6 +3,7 @@ import sys
 import pygame as pygame
 from pygame.math import Vector2
 
+import math
 from config import *
 from screen.game_screen import Game
 from screen.menu_screen import Main
@@ -40,6 +41,7 @@ if __name__ == '__main__':
     LISTENER = Listener()
 
     while True:
+        # print('RUNNING')
         MOUSE_POS = pygame.mouse.get_pos()
         MAIN_SCREEN.snake_record = GAME_SCREEN.record
         MAIN_SCREEN.prev_score = GAME_SCREEN.prev_score
@@ -74,15 +76,17 @@ if __name__ == '__main__':
                 if event.type == pygame.KEYDOWN:
                     GAME_SCREEN.GAME_STATE = 'PLAY'
                     key_event = KeyboardEvent(event, pygame)
-                    if key_event.is_up() and GAME_SCREEN.snake.direction.y != 1:
-                        GAME_SCREEN.snake.direction = Vector2(0, -1)
-                    elif key_event.is_right() and GAME_SCREEN.snake.direction.x != -1:
-                        GAME_SCREEN.snake.direction = Vector2(1, 0)
-                    elif key_event.is_down() and GAME_SCREEN.snake.direction.y != -1:
-                        GAME_SCREEN.snake.direction = Vector2(0, 1)
-                    elif key_event.is_left() and GAME_SCREEN.snake.direction.x != 1:
-                        GAME_SCREEN.snake.direction = Vector2(-1, 0)
-
+                    if event.type == pygame.KEYDOWN:
+                        GAME_SCREEN.GAME_STATE = 'PLAY'
+                        key_event = KeyboardEvent(event, pygame)
+                        if key_event.is_up() and GAME_SCREEN.snake.direction.y != 1:
+                            GAME_SCREEN.snake.direction = Vector2(0, -1)
+                        elif key_event.is_right() and GAME_SCREEN.snake.direction.x != -1:
+                            GAME_SCREEN.snake.direction = Vector2(1, 0)
+                        elif key_event.is_down() and GAME_SCREEN.snake.direction.y != -1:
+                            GAME_SCREEN.snake.direction = Vector2(0, 1)
+                        elif key_event.is_left() and GAME_SCREEN.snake.direction.x != 1:
+                            GAME_SCREEN.snake.direction = Vector2(-1, 0)
             screen.fill((175, 215, 70))
             GAME_SCREEN.draw_elements(pygame)
         elif SCREEN_STATE == 'OPTIONS':
