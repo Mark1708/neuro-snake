@@ -28,6 +28,7 @@ Before | After
 2. Download the Sketch from the folder *_arduino-serial_* by pre-installing the library
 3. Run the `pip install -r command requirements.txt`
 4. Launch the game
+5. Check report file
 
 ## Technologies
 * Python - version 3.9
@@ -35,11 +36,19 @@ Before | After
 ## Result
 ![](https://github.com/Mark1708/neuro-snake/raw/main/assets/demo.gif)
 
+After game is finished, you can check [report](https://github.com/Mark1708/neuro-snake/raw/main/assets/report-05.05.2022-20.00.40.pdf).
+
+![](https://github.com/Mark1708/neuro-snake/raw/main/assets/interpolite.png)
+![](https://github.com/Mark1708/neuro-snake/raw/main/assets/fourie.png)
+![](https://github.com/Mark1708/neuro-snake/raw/main/assets/inverse_fourie.png)
+
 ## Features
 * pygame
 * Arduino
 * BitronicLab
 * Neurointerface
+* Data Analysis
+* Auto-generated report in pdf
 
 ## Status
 Project is: _finished_
