@@ -40,4 +40,4 @@ class Listener:
                 print(e)
                 self.connection(self.port, self.serial_speed)
 
-        return float(data[1])
+        return max(float(data[1]), float(data[1]))

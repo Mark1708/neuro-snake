@@ -120,7 +120,7 @@ class Snake:
 
         self.current_time = pygame.time.get_ticks()
         if self.current_time > self.change_move_time:
-            self.change_move_time = self.current_time + 100 * self.current_speed / 3
+            self.change_move_time = self.current_time + 10 * self.current_speed / 4
             if self.new_block:
                 # Движение змейки со сдвигом при увеличении длины
                 body_copy = self.body[:]
