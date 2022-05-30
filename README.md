@@ -38,7 +38,7 @@ Before | After
 
 After game is finished, you can check [report](https://github.com/Mark1708/neuro-snake/raw/main/assets/report-05.05.2022-20.00.40.pdf).
 
-![](https://github.com/Mark1708/neuro-snake/raw/main/assets/interpolite.png)
+![](https://github.com/Mark1708/neuro-snake/raw/main/assets/interpolation.png)
 ![](https://github.com/Mark1708/neuro-snake/raw/main/assets/fourie.png)
 ![](https://github.com/Mark1708/neuro-snake/raw/main/assets/inverse_fourie.png)
 
