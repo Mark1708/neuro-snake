@@ -54,4 +54,5 @@ MAX_SPEED = 250
 # SOUNDS
 CRUNCH_SOUND_PATH = 'assets/sound/crunch.wav'
 
-RESOURCE_PATH = '/Users/markguranov/Downloads/resource/'
+import os
+RESOURCE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resource')

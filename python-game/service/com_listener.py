@@ -1,3 +1,4 @@
+import os
 import serial
 
 
@@ -10,7 +11,7 @@ class Listener:
         self.is_connected = False
 
         # For test
-        # self.file1 = open('/Users/markguranov/Downloads/resource/BettaGame.dat', 'r')
+        # self.file1 = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'resource', 'BettaGame.dat'), 'r')
         # self.lines = self.file1.readlines()
         # self.line = 0
 
