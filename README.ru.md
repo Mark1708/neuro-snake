@@ -15,7 +15,7 @@
 | Основной стек | Python 3, pygame, pySerial, pandas, NumPy, SciPy, Plotly, FPDF, Arduino Uno |
 | Управление | Направление змейки с клавиатуры |
 | Опциональный вход | Serial-поток Arduino с аналоговых пинов `A0` и `A1` |
-| Runtime-выходы | Игра Snake; подключенные сессии могут сохранять CSV-сэмплы, графики и PDF-отчет |
+| Runtime-результаты | Игра Snake; подключенные сессии могут сохранять CSV-сэмплы, графики и PDF-отчет |
 
 ## Цель
 
@@ -79,7 +79,7 @@ python main.py
 
 ![Demo](assets/demo.gif)
 
-## Обработка сигнала и outputs
+## Обработка сигнала и результаты
 
 Подключенная игровая сессия записывает пары time/value и создает отчет после game over.
 
@@ -87,11 +87,11 @@ python main.py
 |---|---|---|
 | Arduino sketch | `arduino-serial/eeg_reader/eeg_reader.ino` | Читает `A0`/`A1`, пишет serial-значения на `115200` baud каждые `3000` микросекунд |
 | Runtime entrypoint | `python-game/main.py` | Запускайте из `python-game/`, чтобы относительные runtime asset paths разрешались корректно |
-| Captured CSV | `python-game/resourcedata_<timestamp>.csv` | Фактический текущий путь в коде; `RESOURCE_PATH` конкатенируется без разделителя |
-| Generated PDF | `python-game/resourcereport-<timestamp>.pdf` | Фактический текущий путь в коде; создается после завершения подключенной игровой сессии |
-| Generated plots | `python-game/assets/visualization/interpolation.png`, `fourie.png`, `inverse_fourie.png` | Создаются/перезаписываются при генерации отчета |
-| Sample PDF | `assets/report-05.05.2022-20.00.40.pdf` | Сохраненный пример output |
-| README sample images | `assets/interpolation.png`, `assets/fourie.png`, `assets/inverse_fourie.png` | Статические изображения, используемые в этом README |
+| Захваченный CSV | `python-game/resourcedata_<timestamp>.csv` | Фактический текущий путь в коде; `RESOURCE_PATH` конкатенируется без разделителя |
+| Сгенерированный PDF | `python-game/resourcereport-<timestamp>.pdf` | Фактический текущий путь в коде; создается после завершения подключенной игровой сессии |
+| Сгенерированные графики | `python-game/assets/visualization/interpolation.png`, `fourie.png`, `inverse_fourie.png` | Создаются/перезаписываются при генерации отчета |
+| Пример PDF | `assets/report-05.05.2022-20.00.40.pdf` | Сохраненный пример результата |
+| Примеры изображений README | `assets/interpolation.png`, `assets/fourie.png`, `assets/inverse_fourie.png` | Статические изображения, используемые в этом README |
 
 Пример отчета: [PDF](assets/report-05.05.2022-20.00.40.pdf)
 
