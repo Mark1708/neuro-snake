@@ -123,3 +123,7 @@ Example report: [PDF](assets/report-05.05.2022-20.00.40.pdf)
 ## Status
 
 Research/educational project. Results, dependencies, hardware assumptions, and runtime notes are documented for reproducibility, but the repository is not maintained as a packaged product.
+
+## License
+
+[MIT](LICENSE)
